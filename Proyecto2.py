@@ -95,7 +95,14 @@ def menu():
             print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0
         
-
+def cuenta(): 
+    for i in range(1,6): 
+        print (6-i) 
+        time.sleep(1) 
+        
+x = threading.Thread(target = cuenta) 
+x.start() 
+x.join()
 
 menu()
 
