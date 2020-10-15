@@ -6,10 +6,10 @@ import os
 global glc  #gramatica libre del contexto 
 glc = list()
 
-global ap  #gramatica libre del contexto 
+global ap  #automata de pila
 ap = list()
 
-        ###############
+
 def pedirNumeroEntero():
  
     correcto=False
@@ -32,29 +32,32 @@ def opcion1_1_cargar_archivo():
         try:
             ruta =input("direccion del archivo .glc: ")
             archivo_glc = open(ruta ,"r")
-            print("el archivo se leyo correctamente")
+            print("     El archivo se leyo correctamente")
 
             correcto=True
         except :
             print('Error, introduce una direccion correcta')
 
     documento = archivo_glc.read()
-    documento_separado = documento.split("%")
+    documento_separado = documento.split("\n%\n")
     for x in documento_separado:
-        print(x)
-    return
+        if x.isspace():
+            documento_separado.remove(x)
+        else:
+            print(x)
+            print('***********')
+    
+    for i in documento_separado:
+        lineas = i.split('\n')
+        for j in lineas:
+            if j.isspace():
+                lineas.remove(j)
+        print(lineas)
+        print('______________________________')
 
 
 
-
-
-opcion1_1_cargar_archivo()
-
-
-
-
-
-################################################# menusss
+################################################# menusss ##########################################
 def submenu1():
     pase = True
     while pase:
@@ -67,7 +70,8 @@ def submenu1():
         print('     _______________________')
         opcion = pedirNumeroEntero()
         if opcion ==1:
-            print('         seleciono la opcion 1')
+            print('     CARGAR UN NUEVO ARCHIVO DE GRAMATICAS LIBRES DE CONTEXTO')
+            opcion1_1_cargar_archivo()
         elif opcion ==2:
             print('         seleccion la opcion 2')
         elif opcion ==3:
