@@ -1,6 +1,6 @@
 import threading
 import time
-
+import os
 
 def pedirNumeroEntero():
  
@@ -94,15 +94,23 @@ def menu():
         else :
             print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0
-        
+
+#### CONTEO INICIAL _______________________
 def cuenta(): 
     for i in range(1,6): 
+        os.system('cls')
+        print ('')
+        print ('        HUGO ALEXANDER ARREAGA CHOC')
+        print ('        201701108')
+        print ('        SISTEMA Spark Stack ')
         print (6-i) 
         time.sleep(1) 
         
-x = threading.Thread(target = cuenta) 
+        
+'''x = threading.Thread(target = cuenta) 
 x.start() 
 x.join()
-
+os.system('cls')'''
+####_______________________
 menu()
 
