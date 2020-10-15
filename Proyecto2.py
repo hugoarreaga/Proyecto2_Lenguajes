@@ -2,6 +2,14 @@ import threading
 import time
 import os
 
+
+global glc  #gramatica libre del contexto 
+glc = list()
+
+global ap  #gramatica libre del contexto 
+ap = list()
+
+        ###############
 def pedirNumeroEntero():
  
     correcto=False
@@ -15,12 +23,32 @@ def pedirNumeroEntero():
      
     return num
 
+def opcion1_1_cargar_archivo():
+    correcto=False
+    num=0
+    while(not correcto):
+        
+
+        try:
+            ruta =input("direccion del archivo .glc: ")
+            archivo_glc = open(ruta ,"r")
+            print("el archivo se leyo correctamente")
+
+            correcto=True
+        except :
+            print('Error, introduce una direccion correcta')
+
+    documento = archivo_glc.read()
+    documento_separado = documento.split("%")
+    for x in documento_separado:
+        print(x)
+    return
 
 
 
 
 
-
+opcion1_1_cargar_archivo()
 
 
 
@@ -71,6 +99,13 @@ def submenu2():
             print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0
 
+        ## opcion salir
+def salir():
+    print('')
+    print('     *******************************')
+    print('     GRACIAS POR UTILIZAR EL SISTEMA')
+    print('     *******************************')
+
 def menu():
     pase = True
     while pase:
@@ -89,11 +124,19 @@ def menu():
             print('         seleccion la opcion 2')
             submenu2()
         elif opcion ==3:
-            print('         seleccion la opcion 3')
+            salir()
             pase = False
         else :
             print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0
+
+class cglc:
+    nombre = ''
+    no_terminales= list()
+    terminales = list()
+    no_terminal_i =''
+    producciones = list()
+
 
 #### CONTEO INICIAL _______________________
 def cuenta(): 
@@ -107,10 +150,10 @@ def cuenta():
         time.sleep(1) 
         
         
-'''x = threading.Thread(target = cuenta) 
+x = threading.Thread(target = cuenta) 
 x.start() 
 x.join()
-os.system('cls')'''
+os.system('cls')
 ####_______________________
 menu()
 
