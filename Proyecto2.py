@@ -24,6 +24,9 @@ def pedirNumeroEntero():
     return num
 
 def opcion1_1_cargar_archivo():
+
+    
+
     correcto=False
     num=0
     while(not correcto):
@@ -40,21 +43,49 @@ def opcion1_1_cargar_archivo():
 
     documento = archivo_glc.read()
     documento_separado = documento.split("\n%\n")
+
     for x in documento_separado:
-        if x.isspace():
-            documento_separado.remove(x)
-        else:
-            print(x)
-            print('***********')
-    
-    for i in documento_separado:
-        lineas = i.split('\n')
+        
+        lineas = x.split('\n')                      # eliminar lineas vacias ↓↓↓
         for j in lineas:
             if j.isspace():
                 lineas.remove(j)
-        print(lineas)
-        print('______________________________')
+            if j =='%':
+                lineas.remove(j)           # eliminar lineas vacias ↑↑↑
+        
+        glc1 = cglc()
+        glc1.producciones = []                       # limpiar atributo producciones para cada recorrido
+        glc1.nombre = lineas[0]                      # objeto glc __________ nombre
+        glc1.no_terminales = lineas[1].split(',')    # objeto glc __________ no terminales
+        glc1.terminales = lineas[2].split(',')       # objeto glc __________ terminales
+        glc1.no_terminal_i = lineas[3]               # objeto glc __________ no terminal inicial
+        
+        for y in range(4,len(lineas)):
+            linea = lineas[y].replace(">"," ")
+            alfabeto = linea.split(" ")                  # lista de cada alfabeto utilizado por linea
+            glc1.producciones.append(alfabeto)       # objeto glc __________ produccion_n
 
+        glc.append(glc1)                             # objeto glc __________ guardar objeto en lista
+
+    ####
+    imprimir_glc()
+     
+    
+def imprimir_glc():
+    for x  in glc:
+        print('')
+        print('NOMBRE DE LA GRAMATICA: '+x.nombre)
+        print('NO TERMINALES: ')
+        print(x.no_terminales)
+        print('TERMINALES: ')
+        print(x.terminales)
+        print('NO TERMINAL INICIAL: ')
+        print(x.no_terminal_i)
+        print('PRODUCCIONES: ')
+        for y in x.producciones:
+            print(y)
+        print('* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
+    return 0
 
 
 ################################################# menusss ##########################################
@@ -151,13 +182,13 @@ def cuenta():
         print ('        201701108')
         print ('        SISTEMA Spark Stack ')
         print (6-i) 
-        time.sleep(1) 
-        
+        time.sleep(0.25) 
         
 x = threading.Thread(target = cuenta) 
 x.start() 
 x.join()
 os.system('cls')
 ####_______________________
+
 menu()
 
