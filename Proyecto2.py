@@ -148,10 +148,43 @@ def crear_pdf_ap(x):
 
 
 
+
+        ###### tabla de datos
+
+    #file.write(' Nodo_Nombre [shape = none, label="Nombre: '+x.nombre+' "]'+ os.linesep)
+    file.write(' Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
+    file.write('<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0">'+ os.linesep)
+    file.write('<TR><TD align="left"> Nombre = <b>'+x.nombre+'</b></TD></TR>'+ os.linesep)
+    texto =''
+    for y in range(0,len(x.alfabeto)):
+        if y == 0:  texto += x.alfabeto[y]
+        else:       texto += ','+x.alfabeto[y]
+    file.write('<TR><TD align="left"> Alfabeto: { '+texto+' }</TD></TR>'+ os.linesep)
+    
+    texto =''
+    for y in range(0,len(x.simbolo_pila)):
+        if y == 0:  texto += x.simbolo_pila[y]
+        else:       texto += ','+x.simbolo_pila[y]
+    file.write('<TR><TD align="left"> Alfabeto de pila: { '+texto+' }</TD></TR>'+ os.linesep)
+
+    texto =''
+    for y in range(0,len(x.estados)):
+        if y == 0:  texto += x.estados[y]
+        else:       texto += ','+x.estados[y]
+    file.write('<TR><TD align="left"> Estados: { '+texto+' }</TD></TR>'+ os.linesep)
+
+
+    file.write('<TR><TD align="left"> Estado inicial: { '+x.estados_i+' }</TD></TR>'+ os.linesep)
+    file.write('<TR><TD align="left"> Estado de aceptacion: { '+x.estados_a+' }</TD></TR>'+ os.linesep)
+    file.write('</TABLE>>];'+ os.linesep)
+        #######################
+
+
+
     file. write("}"+ os.linesep)  # ultima linea
     file. close()
 
-    print('\n           EL ARCHIVO .PNG DEL AUTOMATA '+x.nombre+' LOGRO GENERARSE CORRECTAMENTE\n')
+    print('\n           EL ARCHIVO .PNG DEL AUTOMATA "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
     os.system('dot -Tpng '+x.nombre+'.dot -o '+x.nombre+'.png')    
     os.system(x.nombre+'.png')
 
