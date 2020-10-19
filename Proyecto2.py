@@ -77,12 +77,13 @@ def opcion2_1_cargar_archivo():
         unico= True
         for x in ap:
             if ap1.nombre == x.nombre:
-                print('     ****ya se agrego una gramatica libre de contexto con ese nombre')
+                print('     ****ya se agrego un automata de pila con ese nombre')
                 unico=False
         if unico:
               
             ap.append(ap1)                             # objeto glc __________ guardar objeto en lista
-    imprimir_ap()
+    si = input('    Presione "y" si desea imprimir los datos guardados o cualquier letra para continuar:')
+    if si =='y':    imprimir_ap()
 
 ### opcion extra    
 def imprimir_ap():
@@ -102,8 +103,60 @@ def imprimir_ap():
         print(x.estados_a)
         for y in x.trancisiones:
             print(y)
-        print('* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
+        print('\n* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
     return 0
+
+def obtener_ap_especifico():
+    paso = True
+    if not ap:
+        print('aun no a cargado ningun ap ')
+        return 'no_existe'
+    else:
+        while paso:
+            print('\n   Listado de automatas guardadas:')
+            for x in ap:
+                print(' -/-> '+x.nombre)
+            nombre = input('    A continuacion escriba el nombre del automata que desea elegir:  ')
+            for x in ap:
+                if nombre == x.nombre:
+                    paso= False
+                    return x.nombre
+            print('El automata no existe, intente con un nuevo nombre')
+
+def opcion2_2_mostrar_informacion():
+    nombre = obtener_ap_especifico()
+    for x in ap:
+        if x.nombre == nombre:
+            crear_pdf_ap(x)
+
+    return 0
+#### opcion extra 
+def crear_pdf_ap(x):
+    file = open(x.nombre+'.dot', "w")
+    file. write("digraph G {" + os.linesep) # primera linea
+    ### nodos
+    file. write("    rankdir =LR ;" + os.linesep)   # estilo de relaciones
+    for y in x.estados:
+        if y == x.estados_a:    
+            file. write('    '+y +'[shape= doublecircle]'+ os.linesep)            # nodos final
+        else:
+            file. write('    '+y +'[shape= circle]'+ os.linesep)                  # nodos
+    
+    for y in x.trancisiones:
+        mensaje = y[1]+','+y[2]+';'+y[4]
+        file.write('    '+y[0] +'->'+y[3]+'[label ="'+mensaje+'"]'+os.linesep)
+
+
+
+    file. write("}"+ os.linesep)  # ultima linea
+    file. close()
+
+    print('\n           EL ARCHIVO .PNG DEL AUTOMATA '+x.nombre+' LOGRO GENERARSE CORRECTAMENTE\n')
+    os.system('dot -Tpng '+x.nombre+'.dot -o '+x.nombre+'.png')    
+    os.system(x.nombre+'.png')
+
+    return 0
+
 ############################################################################################################
 ############################################################################################################
 ############################################################################################################
@@ -151,15 +204,25 @@ def opcion1_1_cargar_archivo():
             alfabeto = linea.split(" ")                  # lista de cada alfabeto utilizado por linea
             glc1.producciones.append(alfabeto)       # objeto glc __________ produccion_n
         unico= True
-        for x in glc:
-            if glc1.nombre == x.nombre:
+        for z in glc:
+            if glc1.nombre == z.nombre:
                 print('     ****ya se agrego una gramatica libre de contexto con ese nombre')
                 unico=False
-        if unico:
-            glc.append(glc1)                             # objeto glc __________ guardar objeto en lista
+        term = False
+        
+        for aa in glc1.producciones:
+            noter = 0
+            for bb in range(2,len(aa)):
+                if str(aa[bb]) in glc1.terminales:      term =True
+            for bb in range(1,len(aa)):
+                if str(aa[bb]) in glc1.no_terminales:   noter+= 1
+            if noter >1:    term=True
+        if term==False:print('      *****La gramatica con nombre: "'+glc1.nombre+'" no es libre de contexto')
+        if unico and term:  glc.append(glc1)                             # objeto glc __________ guardar objeto en lista
 
     ####
-    imprimir_glc()
+    si = input('    Presione "y" si desea imprimir los datos guardados o cualquier letra para continuar:')
+    if si =='y':    imprimir_glc()
      
 ### opcion extra    
 def imprimir_glc():
@@ -175,51 +238,57 @@ def imprimir_glc():
         print('PRODUCCIONES: ')
         for y in x.producciones:
             print(y)
-        print('* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
+        print('\n* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
     return 0
 
 ### opcion extra    
 def obtener_glc_especifico():
     paso = True
-    while paso:
-        print('\n   Listado de gramaticas libres de contexto guardadas:')
-        for x in glc:
-            print(' -/- '+x.nombre)
-        nombre = input('    A continuacion escriba el nombre de la gramatica que desea elegir:  ')
-        for x in glc:
-            if nombre == x.nombre:
-                paso= False
-                return x
-            else:
-                print('El automata no existe, intente con un nuevo nombre')
-        
+    if not glc:
+        print('aun no a cargado ningun glc ')
+        return 'no_existe'
+    else:
+        while paso:
+            print('\n   Listado de gramaticas libres de contexto guardadas:')
+            for x in glc:
+                print(' -/-> '+x.nombre)
+            nombre = input('    A continuacion escriba el nombre de la gramatica que desea elegir:  ')
+            for x in glc:
+                if nombre == x.nombre:
+                    paso= False
+                    return x.nombre
+                else:
+                    print('La gramatica no existe, intente con un nuevo nombre')
+
+#def opcion1_2_mostrar_informacion()        
 
 def opcion1_2_mostrar_informacion():
-    y = obtener_glc_especifico()
-    
-    print('\n   *-*-*-*-*-*-*-*-*-*-*-*')
-    print('   INFORMACION DEL AUTOMATA SELECCIONADO')
-    print('     Nombre:         {'+y.nombre+'}')
-    noterminales =''
-    for x in range(0,len(y.no_terminales)):
-        if x==0: noterminales += y.no_terminales[x]
-        else: noterminales += ', '+y.no_terminales[x]
-    print('     No Terminales:  {'+noterminales+'}')
-    terminalles=''
-    for x in range(0,len(y.terminales)):
-        if x==0: terminalles+= y.terminales[x]
-        else: terminalles += ', '+y.terminales[x]
-    print('     Terminales:     {'+terminalles+'}')
-    print('     No Terminal Ini:{'+y.no_terminal_i+'}')
-    print('     Producciones:')
-    for x in y.producciones:
-        produccionn=''
-        espacionombre=''
-        for z in range(len(x[0])): espacionombre+=' '
-        for y in range(1,len(x)):
-            if y ==1: print('                     { '+x[0]+' > '+x[y] +' }')
-            else:print('                     { '+espacionombre+' | '+x[y] +' }')
-    print('   *-*-*-*-*-*-*-*-*-*-*-*\n')
+    nombre = obtener_glc_especifico()
+    for y in glc:
+        if y.nombre == nombre:
+            print('\n   *-*-*-*-*-*-*-*-*-*-*-*')
+            print('   INFORMACION DEL AUTOMATA SELECCIONADO')
+            print('     Nombre:         {'+y.nombre+'}')
+            noterminales =''
+            for x in range(0,len(y.no_terminales)):
+                if x==0: noterminales += y.no_terminales[x]
+                else: noterminales += ', '+y.no_terminales[x]
+            print('     No Terminales:  {'+noterminales+'}')
+            terminalles=''
+            for x in range(0,len(y.terminales)):
+                if x==0: terminalles+= y.terminales[x]
+                else: terminalles += ', '+y.terminales[x]
+            print('     Terminales:     {'+terminalles+'}')
+            print('     No Terminal Ini:{'+y.no_terminal_i+'}')
+            print('     Producciones:')
+            for x in y.producciones:
+                produccionn=''
+                espacionombre=''
+                for z in range(len(x[0])): espacionombre+=' '
+                for y in range(1,len(x)):
+                    if y ==1: print('                     { '+x[0]+' > '+x[y] +' }')
+                    else:print('                     { '+espacionombre+' | '+x[y] +' }')
+            print('   *-*-*-*-*-*-*-*-*-*-*-*\n')
     return 0
 
 
@@ -299,7 +368,9 @@ def submenu2():
         if   opcion ==1:
             print('         CARGAR ARCHIVO DE AUTOMATA DE PILA')
             opcion2_1_cargar_archivo()
-        elif opcion ==2:print('         seleccion la opcion 2')
+        elif opcion ==2:
+            print('         MOSTRAR INFORMACION DEL AUTOMATA')
+            opcion2_2_mostrar_informacion()
         elif opcion ==3:print('         seleccion la opcion 2')
         elif opcion ==4:print('         seleccion la opcion 3')
         elif opcion ==5:print('         seleccion la opcion 2')

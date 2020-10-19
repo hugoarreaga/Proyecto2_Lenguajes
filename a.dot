@@ -3,12 +3,13 @@ graph G {
 
     /* Entities */
     
-    rankdir = RL
+    rankdir = TD
     /* Relationships */
-    headclip = "FALSE";
-    F1 -- F1[label=" .6dh3"]
-    F1 -- F1[label=".6dh3"]
-    F1 -- F1[label="  .6dh3"]
+    headclip = FALSE;
+    tailclip=true;
+    F1:w -- F1[label=" .6dh3"]
+    F1:s -- F1[label=".6dh3"]
+    F1:sw -- F1[label="  .6dh3"]
     F1 -- da
     
 

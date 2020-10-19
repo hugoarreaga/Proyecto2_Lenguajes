@@ -1,4 +1,4 @@
-AP1 
+AP1
 a,b
 a,b,#
 I,A,B,C,F
@@ -11,7 +11,7 @@ B,b,a;C,$
 C,b,a;C,$
 C,$,#;F,$
 %
-AP2 
+AP2
 x,y
 x,y,#
 S0,S1,S2,S3
@@ -23,10 +23,10 @@ S1,y,x;S2,$
 S2,y,x;S2,$
 S2,$,#;S3,$
 %
-AP3 
+AP3
 x,y
 x,y,#
-S0,S1,S2,S3,s4
+S0,S1,S2,S3,S4
 S0
 S4
 S0,$,$;S1,#
