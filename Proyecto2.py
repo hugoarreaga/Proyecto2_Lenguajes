@@ -136,20 +136,7 @@ def crear_pdf_ap(x):
     file. write("digraph G {" + os.linesep) # primera linea
     ### nodos
     file. write('    rankdir =LR ; ' + os.linesep)   # estilo de relaciones
-    for y in x.estados:
-        if y == x.estados_a:    
-            file. write('    '+y +'[shape= doublecircle]'+ os.linesep)            # nodos final
-        else:
-            file. write('    '+y +'[shape= circle]'+ os.linesep)                  # nodos
-    
-    for y in x.trancisiones:
-        mensaje = y[1]+','+y[2]+';'+y[4]
-        file.write('    '+y[0] +'->'+y[3]+'[label ="'+mensaje+'"]'+os.linesep)
-
-
-
-
-        ###### tabla de datos
+            ###### tabla de datos
 
     
     file.write(' Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
@@ -178,6 +165,23 @@ def crear_pdf_ap(x):
     file.write('<TR><TD align="left"> Estado de aceptacion: { '+x.estados_a+' }</TD></TR>'+ os.linesep)
     file.write('</TABLE>>];'+ os.linesep)
         #######################
+    file.write('Nodo_Vacio [shape=none, label=""]')
+    file.write('Nodo_Vacio -> '+x.estados_i + os.linesep)
+    file.write('Nodo_Tablero -> Nodo_Vacio [color = white]'+ os.linesep)
+    for y in x.estados:
+        if y == x.estados_a:    
+            file. write('    '+y +'[shape= doublecircle]'+ os.linesep)            # nodos final
+        else:
+            file. write('    '+y +'[shape= circle]'+ os.linesep)                  # nodos
+    
+    for y in x.trancisiones:
+        mensaje = y[1]+','+y[2]+';'+y[4]
+        file.write('    '+y[0] +'->'+y[3]+'[label ="'+mensaje+'"]'+os.linesep)
+
+
+
+
+
 
 
 
