@@ -23,17 +23,24 @@ def pedirNumeroEntero():
      
     return num
 
-def opcion1_1_cargar_archivo():
 
-    
 
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
+########################### OPCIONES DE AUTOMATAS DE PILA     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+def opcion2_1_cargar_archivo():
     correcto=False
     num=0
     while(not correcto):
         
 
         try:
-            ruta =input("direccion del archivo .glc: ")
+            ruta =input("direccion del archivo .ap: ")
             archivo_glc = open(ruta ,"r")
             print("     El archivo se leyo correctamente")
 
@@ -51,7 +58,86 @@ def opcion1_1_cargar_archivo():
             if j.isspace():
                 lineas.remove(j)
             if j =='%':
-                lineas.remove(j)           # eliminar lineas vacias ↑↑↑
+                lineas.remove(j)                    # eliminar lineas vacias ↑↑↑
+        
+        ap1 = cap()
+        ap1.trancisiones = []                       # limpiar atributo producciones para cada recorrido
+
+        ap1.nombre = lineas[0]                      # objeto ap __________ nombre
+        ap1.alfabeto = lineas[1].split(',')         # objeto ap __________ alfabeto
+        ap1.simbolo_pila = lineas[2].split(',')     # objeto ap __________ simbolos de pila
+        ap1.estados = lineas[3].split(',')          # objeto ap __________ estados
+        ap1.estados_i = lineas[4]                   # objeto ap __________ estado inicial
+        ap1.estados_a = lineas[5]                   # objeto ap __________ estado aceptacion
+        
+        for y in range(6,len(lineas)):
+            linea = lineas[y].replace(";",",")
+            alfabeto = linea.split(",")              # lista de cada elemento utilizado en la transicion
+            ap1.trancisiones.append(alfabeto)       # objeto glc __________ produccion_n
+        unico= True
+        for x in ap:
+            if ap1.nombre == x.nombre:
+                print('     ****ya se agrego una gramatica libre de contexto con ese nombre')
+                unico=False
+        if unico:
+              
+            ap.append(ap1)                             # objeto glc __________ guardar objeto en lista
+    imprimir_ap()
+
+### opcion extra    
+def imprimir_ap():
+    for x in ap:
+
+        print('')
+        print('NOMBRE DEL AUTOMATA: '+x.nombre)
+        print('ALFABETOS: ')
+        print(x.alfabeto)
+        print('SIMBOLOS DE PILA: ')
+        print(x.simbolo_pila)
+        print('ESTADOS: ')
+        print(x.estados)
+        print('ESTADO INICIAL: ')
+        print(x.estados_i)
+        print('ESTADO ACEPTACION: ')
+        print(x.estados_a)
+        for y in x.trancisiones:
+            print(y)
+        print('* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
+    return 0
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
+############################################################################################################
+########################### OPCIONES DE GRAMATICAS REGULARES LIBRES DE CONTEXTO     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+
+
+def opcion1_1_cargar_archivo():
+    
+    correcto=False
+    num=0
+    while(not correcto):
+        try:
+            ruta =input("direccion del archivo .glc: ")
+            archivo_glc = open(ruta ,"r")
+            print("     El archivo se leyo correctamente")
+
+            correcto=True
+        except :
+            print('Error, introduce una direccion correcta')
+
+    documento = archivo_glc.read()
+    documento_separado = documento.split("\n%\n")
+
+    for x in documento_separado:
+        lineas = x.split('\n')                      # eliminar lineas vacias ↓↓↓
+        for j in lineas:
+            if j.isspace():
+                lineas.remove(j)
+            if j =='%':
+                lineas.remove(j)                    # eliminar lineas vacias ↑↑↑
         
         glc1 = cglc()
         glc1.producciones = []                       # limpiar atributo producciones para cada recorrido
@@ -64,13 +150,18 @@ def opcion1_1_cargar_archivo():
             linea = lineas[y].replace(">"," ")
             alfabeto = linea.split(" ")                  # lista de cada alfabeto utilizado por linea
             glc1.producciones.append(alfabeto)       # objeto glc __________ produccion_n
-
-        glc.append(glc1)                             # objeto glc __________ guardar objeto en lista
+        unico= True
+        for x in glc:
+            if glc1.nombre == x.nombre:
+                print('     ****ya se agrego una gramatica libre de contexto con ese nombre')
+                unico=False
+        if unico:
+            glc.append(glc1)                             # objeto glc __________ guardar objeto en lista
 
     ####
     imprimir_glc()
      
-    
+### opcion extra    
 def imprimir_glc():
     for x  in glc:
         print('')
@@ -87,26 +178,103 @@ def imprimir_glc():
         print('* _ * _ * _ * _ * _ * _ * _ * _ * _ *')
     return 0
 
+### opcion extra    
+def obtener_glc_especifico():
+    paso = True
+    while paso:
+        print('\n   Listado de gramaticas libres de contexto guardadas:')
+        for x in glc:
+            print(' -/- '+x.nombre)
+        nombre = input('    A continuacion escriba el nombre de la gramatica que desea elegir:  ')
+        for x in glc:
+            if nombre == x.nombre:
+                paso= False
+                return x
+            else:
+                print('El automata no existe, intente con un nuevo nombre')
+        
 
+def opcion1_2_mostrar_informacion():
+    y = obtener_glc_especifico()
+    
+    print('\n   *-*-*-*-*-*-*-*-*-*-*-*')
+    print('   INFORMACION DEL AUTOMATA SELECCIONADO')
+    print('     Nombre:         {'+y.nombre+'}')
+    noterminales =''
+    for x in range(0,len(y.no_terminales)):
+        if x==0: noterminales += y.no_terminales[x]
+        else: noterminales += ', '+y.no_terminales[x]
+    print('     No Terminales:  {'+noterminales+'}')
+    terminalles=''
+    for x in range(0,len(y.terminales)):
+        if x==0: terminalles+= y.terminales[x]
+        else: terminalles += ', '+y.terminales[x]
+    print('     Terminales:     {'+terminalles+'}')
+    print('     No Terminal Ini:{'+y.no_terminal_i+'}')
+    print('     Producciones:')
+    for x in y.producciones:
+        produccionn=''
+        espacionombre=''
+        for z in range(len(x[0])): espacionombre+=' '
+        for y in range(1,len(x)):
+            if y ==1: print('                     { '+x[0]+' > '+x[y] +' }')
+            else:print('                     { '+espacionombre+' | '+x[y] +' }')
+    print('   *-*-*-*-*-*-*-*-*-*-*-*\n')
+    return 0
+
+
+def opcion1_3_generar_arbol():
+    y = obtener_glc_especifico()
+    if y is none:
+        print('Aun no se ha cargado ningun archivo')
+    else:
+        file = open("imagen.dot", "w")
+        file.write("graph G {" + os.linesep) # primera linea
+        file.write("rankdir =TD ;splines=line; tailclip=true" + os.linesep) 
+        lista_nodos=list()
+        for x in y.producciones:
+            for z in x:
+                if z in lista_nodos:
+                    pass
+                else:
+                    lista_nodos
+        file.write()
+        file.close()
+
+##################################################################################################
+###################################################################################################
+###################################################################################################
+###################################################################################################    
+##################################################################################################
 ################################################# menusss ##########################################
+
+
 def submenu1():
     pase = True
     while pase:
         print('     _____________________________________')
         print('      MENU gramáticas libres del contexto')
-        print('      Seleccione una opcion')
-        print('      1) Opcion 1')
-        print('      2) Opcion 2')
-        print('      3) Salir')
+        print('      Introduce el numero asociado a la izquierda de la opcion deseada')
+        print('       1)     Cargar un nuevo archivo de gramaticas libres de contexto')
+        print('       2)     Mostrar informacion general')
+        print('       3)     Arbol de Derivación')
+        print('       4)     Generar automata de pila equivalente')
+        print('       5)     Salir')
         print('     _______________________')
         opcion = pedirNumeroEntero()
-        if opcion ==1:
+        if   opcion ==1:
             print('     CARGAR UN NUEVO ARCHIVO DE GRAMATICAS LIBRES DE CONTEXTO')
             opcion1_1_cargar_archivo()
         elif opcion ==2:
-            print('         seleccion la opcion 2')
+            print('     MOSTRAR INFORMACION GENERAL')
+            opcion1_2_mostrar_informacion()
         elif opcion ==3:
-            print('         seleccion la opcion 3')
+            print('     ARBOL DE DERIVACION')
+            pase = False
+        elif opcion ==4:
+            print('     GENERAR AUTOMATA DE PILA EQUIVALENTE')
+        elif opcion ==5:
+            print('     Salió del menu "gramaticas libre de contexto" ')
             pase = False
         else :
             print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
@@ -117,52 +285,53 @@ def submenu2():
     while pase:
         print('     _________________________')
         print('      MENU autómatas de pila')
-        print('      Seleccione una opcion')
-        print('      1) Opcion 1')
-        print('      2) Opcion 2')
-        print('      3) Salir')
+        print('      Introduce el numero asociado a la izquierda de la opcion deseada')
+        print('       1)    Cargar archivo de automata de pila')
+        print('       2)    Mostrar información de autómata')
+        print('       3)    Validar una cadena')
+        print('       4)    Ruta de validacion')
+        print('       5)    Recorrido paso a paso')
+        print('       6)    Validar cadena en una pasada')
+        print('       7)    Salir')
+        
         print('     _________________________')
         opcion = pedirNumeroEntero()
-        if opcion ==1:
-            print('         seleciono la opcion 1')
-        elif opcion ==2:
-            print('         seleccion la opcion 2')
-        elif opcion ==3:
+        if   opcion ==1:
+            print('         CARGAR ARCHIVO DE AUTOMATA DE PILA')
+            opcion2_1_cargar_archivo()
+        elif opcion ==2:print('         seleccion la opcion 2')
+        elif opcion ==3:print('         seleccion la opcion 2')
+        elif opcion ==4:print('         seleccion la opcion 3')
+        elif opcion ==5:print('         seleccion la opcion 2')
+        elif opcion ==6:print('         seleccion la opcion 3')
+        elif opcion ==7:
             print('         seleccion la opcion 3')
             pase = False
-        else:
-            print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
+        else:           print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0
 
         ## opcion salir
 def salir():
-    print('')
-    print('     *******************************')
-    print('     GRACIAS POR UTILIZAR EL SISTEMA')
-    print('     *******************************')
+    yy = threading.Thread(target= cuenta_salir)
+    yy.start()
+    yy.join()
 
 def menu():
     pase = True
     while pase:
-        print('     _________________________')
-        print('      MENU INCIAL Spark Stack')
-        print('      Seleccione una opcion')
-        print('      1) gramáticas libres del contexto')
-        print('      2) autómatas de pila')
-        print('      3) Salir')
-        print('     _________________________')
+        print('     _________________________\n      MENU INCIAL Spark Stack\n      Introduce el numero asociado a la izquierda de la opcion deseada')
+        print('       1)    gramáticas libres del contexto\n       2)    autómatas de pila\n       3)    Salir\n     _________________________')
         opcion = pedirNumeroEntero()
-        if opcion ==1:
+        if   opcion ==1:
             print('         seleciono la opcion 1')
             submenu1()
         elif opcion ==2:
             print('         seleccion la opcion 2')
             submenu2()
-        elif opcion ==3:
+        elif opcion ==3:    
             salir()
             pase = False
-        else :
-            print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
+        else:           print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0
 
 class cglc:
@@ -172,6 +341,14 @@ class cglc:
     no_terminal_i =''
     producciones = list()
 
+class cap:
+    nombre = ''
+    alfabeto= list()
+    simbolo_pila = list()
+    estados= list()
+    estados_i =''
+    estados_a =''
+    trancisiones = list()
 
 #### CONTEO INICIAL _______________________
 def cuenta(): 
@@ -181,9 +358,19 @@ def cuenta():
         print ('        HUGO ALEXANDER ARREAGA CHOC')
         print ('        201701108')
         print ('        SISTEMA Spark Stack ')
-        print (6-i) 
+        print ('               '+str(6-i)) 
         time.sleep(0.25) 
-        
+#### CONTEO FINAL
+def cuenta_salir():
+    
+    for i in range(1,6):
+        os.system('cls')
+        print('\n     *******************************\n     GRACIAS POR UTILIZAR EL SISTEMA')
+        print('                     '+str(6-i))
+        print('                  ADIOSSS\n     *******************************')
+        time.sleep(0.75) 
+    os.system('cls')
+
 x = threading.Thread(target = cuenta) 
 x.start() 
 x.join()

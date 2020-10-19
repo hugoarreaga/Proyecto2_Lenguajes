@@ -1,0 +1,11 @@
+Gramatica6
+S,AAAA,BBBBB,C
+a,b,z
+S
+S>AAAA
+AAAA>a BBBBB a
+BBBBB>b BBBBB b
+BBBBB>C
+C>z C
+C>z
+%

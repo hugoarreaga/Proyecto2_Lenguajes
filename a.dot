@@ -1,0 +1,17 @@
+graph G {
+    ///splines="FALSE";
+
+    /* Entities */
+    
+    rankdir = RL
+    /* Relationships */
+    headclip = "FALSE";
+    F1 -- F1[label=" .6dh3"]
+    F1 -- F1[label=".6dh3"]
+    F1 -- F1[label="  .6dh3"]
+    F1 -- da
+    
+
+    /* Ranks */
+    ///{ rank=same; shortName; };
+}
