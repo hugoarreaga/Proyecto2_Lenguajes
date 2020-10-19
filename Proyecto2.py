@@ -356,34 +356,9 @@ def generar_automata_equivalente_pdf(x):
     file = open(x.nombre+'.dot', "w")
     file. write("digraph G {" + os.linesep) # primera linea
     ### nodos
-    file. write('    rankdir =LR ; ' + os.linesep)   # estilo de relaciones
+    file. write('    rankdir =TD ; splines=line; tailclip=false' + os.linesep)   # estilo de relaciones
 
-    file.write('i [shape= circle]'+ os.linesep)
-    file.write('p [shape= circle]'+ os.linesep)
-    file.write('f [shape= doublecircle]'+ os.linesep)
-
-    file.write('vacio [shape=none,label=""]'+ os.linesep)
-    file.write('vacio -> i'+ os.linesep)
-    file.write('i -> p [label="$,$;#"]'+ os.linesep)
-    file.write('p -> q [label="$,$;'+x.no_terminal_i+'"]'+ os.linesep)
-    tamanio = 0
-    for y in x.producciones:
-        cadena=''
-        tamanio= tamanio+1
-        for z in range(1,len(y)):
-            cadena+=str(z)
-        file. write('q -> q[label= "#,'+y[0]+';'+cadena+'"]'+ os.linesep)                  # nodos
-    
-    for y in x.terminales:
-        
-        tamanio= tamanio+1
-        file.write('q -> q [label ="'+y+','+y+';$"]'+ os.linesep)
-
-    file.write('q -> f [label="$,#;$"]'+ os.linesep)
-    
-    
-    file.write('q [shape= polygon,sides='+str(tamanio)+']'+ os.linesep)
-        ###### tabla de datos
+    ###### nodo extra ----- tabla de datos
 
     
     file.write(' Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
@@ -406,6 +381,92 @@ def generar_automata_equivalente_pdf(x):
     file.write('</TABLE>>];'+ os.linesep)
 
         #############
+    
+    #### nodos medios
+    
+    file.write('i [shape= circle,style = filled, color = lightblue]'+ os.linesep)
+    file.write('p [shape= circle,style = filled, color = lightblue]'+ os.linesep)
+    file.write('q [margin=1,style = filled, color = lightblue]'+ os.linesep)
+    file.write('f [shape= circle,peripheries=3,style = filled, color = lightblue]'+ os.linesep)             
+    #### nodos separadores
+    file.write('vacio [shape=none,label=""]'+ os.linesep)
+    file.write('arriba [shape=none,label=""]'+ os.linesep)
+    file.write('abajo[shape=none,label=""]'+ os.linesep)
+    #### nodos arriba --- producciones
+    producciones = 100
+    for y in x.producciones:
+        nodoparcial=''
+        for z in range(1,len(y)):
+            nodoparcial+=y[z]
+        nodo = '$,'+str(y[0])+';'+nodoparcial
+        
+        file.write(str(producciones)+' [shape = none,label="'+nodo+'"]'+ os.linesep)
+        producciones = producciones+1
+
+    #### nodos arriba --- terminales
+    terminales = 200
+    for y in x.terminales:
+        nodo = str(y)+','+str(y)+';$'
+        file.write(str(terminales)+' [shape = none, label ="'+nodo+'"]'+ os.linesep)
+        terminales = terminales+1
+    
+    ###/* Relationships */
+    file.write('arriba -> vacio -> abajo -> Nodo_Tablero [color = white]'+os.linesep)
+    file.write('vacio -> i -> p  -> q -> f [color=white]'+os.linesep)
+    ### relaciones linea arriba
+    aa=''
+    producciones=100
+    for y in x.producciones:
+        aa += ' -> '+ str(producciones)
+        producciones = producciones+1
+    file.write('arriba'+aa+'[color = white]'+os.linesep)
+    #### relaciones linea abajo
+    aa=''
+    terminales = 200
+    for y in x.terminales:
+        aa += " -> "+ str(terminales)
+        terminales = terminales+1
+    file.write('abajo'+aa+'[color = white]'+os.linesep)
+
+    ### relaciones lineas medias
+    file.write('vacio -> i'+ os.linesep)
+    file.write('i -> p [label="$,$;#"]'+ os.linesep)
+    file.write('p -> q [label="$,$;'+x.no_terminal_i+'"]'+ os.linesep)
+    file.write('q -> f [label="$,#;$"]'+ os.linesep)
+    
+    ### relaciones producciones
+    producciones = 100
+    for y in x.producciones:
+        file.write(str(producciones)+' -> q ; q -> '+str(producciones)+' [ dir= none]'+ os.linesep)
+        producciones = producciones+1
+
+    ### relaciones terminales
+    terminales = 200
+    for y in x.terminales:
+        file.write(str(terminales)+' -> q ; q -> '+str(terminales)+' [ dir= none]'+ os.linesep)
+        terminales = terminales +1
+    #### rank de los medios
+    file.write('{rank =same ; vacio; i ; p ; q ; f};'+os.linesep)
+    
+    #### rank de las producciones
+    rankproducciones=''
+    producciones = 100
+    for y in x.producciones:
+        rankproducciones += ' ; '+str(producciones)
+        producciones = producciones+1
+    file.write('{rank =same ; arriba '+rankproducciones +'};'+os.linesep)
+
+    #### rank terminales
+    rankterminales=''
+    terminales = 200
+    for y in x.terminales:
+        rankterminales +=' ; '+ str(terminales)
+        terminales = terminales+1
+    file.write('{rank =same ; abajo '+rankterminales +'};'+os.linesep)
+
+
+
+        
 
     file. write("}"+ os.linesep)  # ultima linea
     file. close()
