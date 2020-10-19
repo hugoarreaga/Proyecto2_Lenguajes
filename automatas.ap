@@ -2,7 +2,7 @@ AP1
 a,b
 a,b,#
 I,A,B,C,F
-I 
+I
 F
 I,$,$;A,#
 A,a,$;B,a
@@ -15,7 +15,7 @@ AP2
 x,y
 x,y,#
 S0,S1,S2,S3
-S0 
+S0
 S3
 S0,$,$;S1,#
 S1,x,$;S1,x

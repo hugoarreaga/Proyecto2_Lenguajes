@@ -1,18 +1,31 @@
-graph G {
-    ///splines="FALSE";
-
-    /* Entities */
-    
+digraph G {
     rankdir = TD
-    /* Relationships */
-    headclip = FALSE;
-    tailclip=true;
-    F1:w -- F1[label=" .6dh3"]
-    F1:s -- F1[label=".6dh3"]
-    F1:sw -- F1[label="  .6dh3"]
-    F1 -- da
+    /* Entities */
+    a [shape = none];    b [shape = none]    c [shape = none];    d [shape = none];     ///// nodos arriba
+    e [shape = none];    f [shape = none];    g [shape = none];    h [shape = none]     ///// nodos abajo
+    nuevo  [shape= box];    principal [margin=1];   final [shape =doublecircle]         ///// nodos medios
+
+    arriba [shape=none, label="arriba \n borrar"];    medio [shape=none, label="medio \n borrar"];      /// ver abajo
+    abajo [shape=none, label="abajo \n borrar"];                                                /// nodos separadores
     
+    /* Relationships */
+    arriba -> medio -> abajo [color = white]
+    medio  -> nuevo -> si -> principal -> final
+    arriba -> a -> b -> c -> d [color = white]
+    abajo  -> e -> f -> g -> h[color=white]
+
+    a -> principal;    principal -> a[ dir= none]
+    b -> principal;    principal -> b[ dir= none]
+    c -> principal;    principal -> c[ dir= none]
+    d -> principal;    principal -> d[ dir= none]
+    ###
+    e -> principal;    principal -> e[ dir= none]
+    f -> principal;    principal -> f[ dir= none]
+    g -> principal;    principal -> g[ dir= none]
+    h -> principal;    principal -> h[ dir= none]
 
     /* Ranks */
-    ///{ rank=same; shortName; };
+    { rank=same;arriba; a; b ; c ; d ;};
+    { rank=same;medio ; nuevo ; final ; principal ; si};
+    { rank=same;abajo ; e ; f ; g ; h};
 }

@@ -130,12 +130,12 @@ def opcion2_2_mostrar_informacion():
             crear_pdf_ap(x)
 
     return 0
-#### opcion extra 
+    ################################ opcion extra 
 def crear_pdf_ap(x):
     file = open(x.nombre+'.dot', "w")
     file. write("digraph G {" + os.linesep) # primera linea
     ### nodos
-    file. write("    rankdir =LR ;" + os.linesep)   # estilo de relaciones
+    file. write('    rankdir =LR ; ' + os.linesep)   # estilo de relaciones
     for y in x.estados:
         if y == x.estados_a:    
             file. write('    '+y +'[shape= doublecircle]'+ os.linesep)            # nodos final
@@ -151,7 +151,7 @@ def crear_pdf_ap(x):
 
         ###### tabla de datos
 
-    #file.write(' Nodo_Nombre [shape = none, label="Nombre: '+x.nombre+' "]'+ os.linesep)
+    
     file.write(' Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
     file.write('<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0">'+ os.linesep)
     file.write('<TR><TD align="left"> Nombre = <b>'+x.nombre+'</b></TD></TR>'+ os.linesep)
@@ -342,6 +342,82 @@ def opcion1_3_generar_arbol():
                     lista_nodos
         file.write()
         file.close()
+    return 0
+    
+def opcion1_4_generar_automata():
+    nombre = obtener_glc_especifico()
+    for x in glc:
+        if nombre == x.nombre:
+            generar_automata_equivalente_pdf(x)
+
+    return 0
+
+def generar_automata_equivalente_pdf(x):
+    file = open(x.nombre+'.dot', "w")
+    file. write("digraph G {" + os.linesep) # primera linea
+    ### nodos
+    file. write('    rankdir =LR ; ' + os.linesep)   # estilo de relaciones
+
+    file.write('i [shape= circle]'+ os.linesep)
+    file.write('p [shape= circle]'+ os.linesep)
+    file.write('f [shape= doublecircle]'+ os.linesep)
+
+    file.write('vacio [shape=none,label=""]'+ os.linesep)
+    file.write('vacio -> i'+ os.linesep)
+    file.write('i -> p [label="$,$;#"]'+ os.linesep)
+    file.write('p -> q [label="$,$;'+x.no_terminal_i+'"]'+ os.linesep)
+    tamanio = 0
+    for y in x.producciones:
+        cadena=''
+        tamanio= tamanio+1
+        for z in range(1,len(y)):
+            cadena+=str(z)
+        file. write('q -> q[label= "#,'+y[0]+';'+cadena+'"]'+ os.linesep)                  # nodos
+    
+    for y in x.terminales:
+        
+        tamanio= tamanio+1
+        file.write('q -> q [label ="'+y+','+y+';$"]'+ os.linesep)
+
+    file.write('q -> f [label="$,#;$"]'+ os.linesep)
+    
+    
+    file.write('q [shape= polygon,sides='+str(tamanio)+']'+ os.linesep)
+        ###### tabla de datos
+
+    
+    file.write(' Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
+    file.write('<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0">'+ os.linesep)
+    file.write('<TR><TD align="left"> Nombre = <b>'+x.nombre+'</b></TD></TR>'+ os.linesep)
+    texto =''
+    for y in range(0,len(x.terminales)):
+        if y == 0:  texto += x.terminales[y]
+        else:       texto += ','+x.terminales[y]
+    file.write('<TR><TD align="left"> Alfabeto: { '+texto+' }</TD></TR>'+ os.linesep)
+    
+    for y in x.no_terminales:
+        texto += ','+str(y)
+    texto +=',#'
+    file.write('<TR><TD align="left"> Alfabeto de pila: { '+texto+' }</TD></TR>'+ os.linesep)
+
+    file.write('<TR><TD align="left"> Estados: { i,q,p,f }</TD></TR>'+ os.linesep)
+    file.write('<TR><TD align="left"> Estado inicial: { i }</TD></TR>'+ os.linesep)
+    file.write('<TR><TD align="left"> Estado de aceptacion: { f }</TD></TR>'+ os.linesep)
+    file.write('</TABLE>>];'+ os.linesep)
+
+        #############
+
+    file. write("}"+ os.linesep)  # ultima linea
+    file. close()
+
+    print('\n           EL ARCHIVO .PDF DEL AUTOMATA EQUIVALENTE "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
+    os.system('dot -Tpdf '+x.nombre+'.dot -o '+x.nombre+'.pdf')    
+    os.system(x.nombre+'.pdf')
+
+    return 0
+
+
+
 
 ##################################################################################################
 ###################################################################################################
@@ -375,6 +451,7 @@ def submenu1():
             pase = False
         elif opcion ==4:
             print('     GENERAR AUTOMATA DE PILA EQUIVALENTE')
+            opcion1_4_generar_automata()
         elif opcion ==5:
             print('     Salió del menu "gramaticas libre de contexto" ')
             pase = False
@@ -404,12 +481,12 @@ def submenu2():
         elif opcion ==2:
             print('         MOSTRAR INFORMACION DEL AUTOMATA')
             opcion2_2_mostrar_informacion()
-        elif opcion ==3:print('         seleccion la opcion 2')
-        elif opcion ==4:print('         seleccion la opcion 3')
-        elif opcion ==5:print('         seleccion la opcion 2')
-        elif opcion ==6:print('         seleccion la opcion 3')
+        elif opcion ==3:print('         seleccion la opcion 3')
+        elif opcion ==4:print('         seleccion la opcion 4')
+        elif opcion ==5:print('         seleccion la opcion 5')
+        elif opcion ==6:print('         seleccion la opcion 6')
         elif opcion ==7:
-            print('         seleccion la opcion 3')
+            print('         seleccionp la opcion 7')
             pase = False
         else:           print('     **DEBE ELEGIR UNA DE LAS OPCIONES DISPONIBLES**')
     return 0

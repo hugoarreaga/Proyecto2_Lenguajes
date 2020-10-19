@@ -1,5 +1,14 @@
 import os
+import math
 
+
+a = 7
+print(int(math.sqrt(a))+1)
+print(math.sqrt(a))
+if a%2 ==0:
+    pass
+else:
+    print((a+1)/2)
 '''
 try:
     os.system("dot -Tpng a.dot -o a.png")    
