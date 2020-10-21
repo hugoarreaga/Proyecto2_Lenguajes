@@ -1,35 +1,47 @@
 import os
 import math
 
+a = ['a','1','c','d'] 
+b = ['1','d','2','C']
+c = ['2','3','g']
+d = ['3','2','4']
+e = ['2','e','3']
+f = ['3','w','z']
 
-a = 7
-print(int(math.sqrt(a))+1)
-print(math.sqrt(a))
-if a%2 ==0:
-    pass
-else:
-    print((a+1)/2)
-'''
-try:
-    os.system("dot -Tpng a.dot -o a.png")    
-    print('hecho')
-except :
-    print("aun no se ha cargado un archivo")
-'''
-a =['1','2','3','4']
-b = list()
-b.append(a)
-for x in b:
-    
-    for y in x:
-        espacio=''
-        for z in range(len(y)):
-            espacio+='*'
-        print(str(len(y))+' '+ y+' {'+espacio+'}')
+datos = list()
+datos.append(a)
+datos.append(b)
+datos.append(c)
+datos.append(d)
+datos.append(e)
+datos.append(f)
+print (datos)
+nodos = []
+ac = 100
+for x in range(0,len(datos)):
+    linea= [] 
+    for y in range(0,len(datos[x])):
+        linea.append(ac)
+        ac = ac+1
+    nodos.append(linea)
+print(nodos)
+si =['1','2','3']
+print(si)
 
-for x in a:
-    print('dsaf')
-    
-    
-    a = input('presione cualquier letra para mostrar el siguiente paso>')
-    os.system(str(x)+'.png')
+for x in range(0,len(datos)):
+    for y in range(1,len(datos[x])):
+        if datos[x][y] in si:
+            for z in range(x,len(datos)):
+                if datos[z][0] == datos[x][y]:
+                    nodos[z][0] = nodos[x][y]
+                    print(nodos[z][0])
+                    break
+
+print('nodos despues de cambio')
+print(nodos)
+
+
+
+
+
+               

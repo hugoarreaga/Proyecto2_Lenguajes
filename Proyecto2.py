@@ -297,7 +297,7 @@ def obtener_glc_especifico():
                 else:
                     print('La gramatica no existe, intente con un nuevo nombre')
 
-#def opcion1_2_mostrar_informacion()        
+#def opcion1.2_mostrar_informacion()        
 
 def opcion1_2_mostrar_informacion():
     nombre = obtener_glc_especifico()
@@ -330,22 +330,53 @@ def opcion1_2_mostrar_informacion():
 
 
 def opcion1_3_generar_arbol():
-    y = obtener_glc_especifico()
-    if y is none:
-        print('Aun no se ha cargado ningun archivo')
-    else:
-        file = open("imagen.dot", "w")
-        file.write("graph G {" + os.linesep) # primera linea
-        file.write("rankdir =TD ;splines=line; tailclip=true" + os.linesep) 
-        lista_nodos=list()
-        for x in y.producciones:
-            for z in x:
-                if z in lista_nodos:
-                    pass
-                else:
-                    lista_nodos
-        file.write()
-        file.close()
+    nombre = obtener_glc_especifico()
+    for x in glc:
+        if nombre == x.nombre:
+            generar_arbol_pdf(x)
+
+    return 0
+
+def generar_arbol_pdf(x):
+    file = open(x.nombre+'.dot', "w")
+    file. write("graph G {" + os.linesep) # primera linea
+    file.write(' Node [shape = none]'+ os.linesep)
+    ### crear lista de nodos
+    nodos = []
+    
+    ac = 100
+    for i in range(0,len(x.producciones)):
+        linea= [] 
+        for y in range(0,len(x.producciones[i])):
+            linea.append(ac)
+            ac = ac+1
+        nodos.append(linea)
+    #### crear lista de nodos
+    print(nodos)
+    print(x.producciones)
+    ### cambiar nodos
+    for i in range(0,len(x.producciones)):
+        for y in range(1,len(x.producciones[i])):
+            if x.producciones[i][y] in x.no_terminales:
+                for z in range(i+1,len(x.producciones)):
+                    if x.producciones[z][0] == x.producciones[i][y]:
+                        nodos[z][0] = nodos[i][y]
+                        break
+    print(nodos)
+
+    ### cambiar nodos
+    for i in range(0,len(nodos)):
+        for j in range(0,len(nodos[i])):
+            file.write(str(nodos[i][j]) + '[ label = '+str(x.producciones[i][j])+ ' ]'+os.linesep)
+    file.write(str(x.nombre)+' [shape = box]' + os.linesep )
+    file.write(str(x.nombre)+' -- 100 [color = white];' + os.linesep )
+    for i in range(0,len(nodos)):
+        for j in range(1,len(nodos[i])):
+            file.write(str(nodos[i][0])+' -- '+str(nodos[i][j]) +' ;'+os.linesep)
+
+    file.write('}')
+    file.close()
+    os.system('dot -Tpng '+x.nombre+'.dot -o '+x.nombre+'-arbol.png')
     return 0
     
 def opcion1_4_generar_automata():
@@ -384,8 +415,8 @@ def generar_automata_equivalente_pdf(x):
     file.write('<TR><TD align="left"> Estado de aceptacion: { f }</TD></TR>'+ os.linesep)
     file.write('</TABLE>>];'+ os.linesep)
 
-        #############
-    
+    #############
+
     #### nodos medios
     
     file.write('i [shape= circle,style = filled, color = lightblue]'+ os.linesep)
@@ -396,7 +427,9 @@ def generar_automata_equivalente_pdf(x):
     file.write('vacio [shape=none,label=""]'+ os.linesep)
     file.write('arriba [shape=none,label=""]'+ os.linesep)
     file.write('abajo[shape=none,label=""]'+ os.linesep)
-    #### nodos arriba --- producciones
+
+
+    #### nodos arriba --- terminales
     producciones = 100
     for y in x.producciones:
         nodoparcial=''
@@ -407,14 +440,14 @@ def generar_automata_equivalente_pdf(x):
         file.write(str(producciones)+' [shape = none,label="'+nodo+'"]'+ os.linesep)
         producciones = producciones+1
 
-    #### nodos arriba --- terminales
+    #### nodos abajo --- producciones
     terminales = 200
     for y in x.terminales:
         nodo = str(y)+','+str(y)+';$'
         file.write(str(terminales)+' [shape = none, label ="'+nodo+'"]'+ os.linesep)
         terminales = terminales+1
     
-    ###/* Relationships */
+    ###         /* Relationships */
     file.write('arriba -> vacio -> abajo -> Nodo_Tablero [color = white]'+os.linesep)
     file.write('vacio -> i -> p  -> q -> f [color=white]'+os.linesep)
     ### relaciones linea arriba
@@ -476,8 +509,8 @@ def generar_automata_equivalente_pdf(x):
     file. close()
 
     print('\n           EL ARCHIVO .PDF DEL AUTOMATA EQUIVALENTE "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
-    os.system('dot -Tpdf '+x.nombre+'.dot -o '+x.nombre+'.pdf')    
-    os.system(x.nombre+'.pdf')
+    os.system('dot -Tpdf '+x.nombre+'.dot -o '+x.nombre+'auto_equiv.pdf')    
+    ##os.system(x.nombre+'.pdf')
 
     return 0
 
@@ -513,7 +546,7 @@ def submenu1():
             opcion1_2_mostrar_informacion()
         elif opcion ==3:
             print('     ARBOL DE DERIVACION')
-            pase = False
+            opcion1_3_generar_arbol()
         elif opcion ==4:
             print('     GENERAR AUTOMATA DE PILA EQUIVALENTE')
             opcion1_4_generar_automata()
