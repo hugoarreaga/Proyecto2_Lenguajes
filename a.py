@@ -2,9 +2,9 @@ import os
 import math
 
 a = ['a','1','c','d'] 
-b = ['1','d','2','C']
+b = ['c','d','2','C']
 c = ['2','3','g']
-d = ['3','2','4']
+d = ['b','2','4']
 e = ['2','e','3']
 f = ['3','w','z']
 
@@ -28,20 +28,27 @@ print(nodos)
 si =['1','2','3']
 print(si)
 
-for x in range(0,len(datos)):
-    for y in range(1,len(datos[x])):
-        if datos[x][y] in si:
-            for z in range(x,len(datos)):
-                if datos[z][0] == datos[x][y]:
-                    nodos[z][0] = nodos[x][y]
+for i in range(0,len(datos)):
+    for y in range(1,len(datos[i])):
+        if datos[i][y] in si:
+            for z in range(i,len(datos)):
+                if datos[z][0] == datos[i][y]:
+                    nodos[z][0] = nodos[i][y]
                     print(nodos[z][0])
                     break
 
 print('nodos despues de cambio')
 print(nodos)
 
-
-
+susu= []
+susu.append('S>A a B')
+susu.append('A>a A')
+susu.append('A>a')
+susu.append('B>b C a')
+susu.append('C>c')
+susu.sort()
+datos.sort()
+print(datos)
 
 
                

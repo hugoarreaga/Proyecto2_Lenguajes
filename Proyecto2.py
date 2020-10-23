@@ -303,31 +303,54 @@ def opcion1_2_mostrar_informacion():
     nombre = obtener_glc_especifico()
     for y in glc:
         if y.nombre == nombre:
-            print('\n   *-*-*-*-*-*-*-*-*-*-*-*')
-            print('   INFORMACION DEL AUTOMATA SELECCIONADO')
-            print('     Nombre:         {'+y.nombre+'}')
-            noterminales =''
-            for x in range(0,len(y.no_terminales)):
-                if x==0: noterminales += y.no_terminales[x]
-                else: noterminales += ', '+y.no_terminales[x]
-            print('     No Terminales:  {'+noterminales+'}')
-            terminalles=''
-            for x in range(0,len(y.terminales)):
-                if x==0: terminalles+= y.terminales[x]
-                else: terminalles += ', '+y.terminales[x]
-            print('     Terminales:     {'+terminalles+'}')
-            print('     No Terminal Ini:{'+y.no_terminal_i+'}')
-            print('     Producciones:')
-            for x in y.producciones:
-                produccionn=''
-                espacionombre=''
-                for z in range(len(x[0])): espacionombre+=' '
-                for y in range(1,len(x)):
-                    if y ==1: print('                     { '+x[0]+' > '+x[y] +' }')
-                    else:print('                     { '+espacionombre+' | '+x[y] +' }')
-            print('   *-*-*-*-*-*-*-*-*-*-*-*\n')
+            imprimir_1_2(y)
+    nombre = 'no_existe'
+            
     return 0
 
+def imprimir_1_2(y):
+    print('\n   *-*-*-*-*-*-*-*-*-*-*-*')
+    print('   INFORMACION DEL AUTOMATA SELECCIONADO')
+    print('     Nombre:         {'+y.nombre+'}')
+    noterminales =''
+    for x in range(0,len(y.no_terminales)):
+        if x==0: noterminales += y.no_terminales[x]
+        else: noterminales += ', '+y.no_terminales[x]
+    print('     No Terminales:  {'+noterminales+'}')
+    terminalles=''
+    for x in range(0,len(y.terminales)):
+        if x==0: terminalles+= y.terminales[x]
+        else: terminalles += ', '+y.terminales[x]
+    print('     Terminales:     {'+terminalles+'}')
+    print('     No Terminal Ini:{'+y.no_terminal_i+'}')
+    print('     Producciones:')
+
+    producc = []
+    for x in y.producciones:
+        for z in range(1,len(x)):
+            lin = []
+            lin.append(x[0])
+            lin.append(x[z])
+            producc.append(lin)
+    producc.sort()
+    espacionombre=''
+    actual = producc[0][0]
+    print(producc[0][0]+' > '+producc[0][1])
+    for x in range(1,len(producc)):
+        
+        espacionombre=''
+        for z in range(len(producc[x][0])): espacionombre+=' '
+        
+        if producc[x][0] == actual:  print(espacionombre+' | '+producc[x][1])
+        else: 
+            actual = producc[x][0]
+            print(producc[x][0]+' > '+producc[x][1])     
+     
+
+    print('   *-*-*-*-*-*-*-*-*-*-*-*\n')
+    continuar = input('Presione "Enter" para continuar')
+    os.system('cls')
+    return 0 
 
 def opcion1_3_generar_arbol():
     nombre = obtener_glc_especifico()
@@ -338,9 +361,8 @@ def opcion1_3_generar_arbol():
     return 0
 
 def generar_arbol_pdf(x):
-    file = open(x.nombre+'.dot', "w")
+    file = open(x.nombre+'-arbol.dot', "w")
     file. write("graph G {" + os.linesep) # primera linea
-    file.write(' Node [shape = none]'+ os.linesep)
     ### crear lista de nodos
     nodos = []
     
@@ -367,16 +389,20 @@ def generar_arbol_pdf(x):
     ### cambiar nodos
     for i in range(0,len(nodos)):
         for j in range(0,len(nodos[i])):
-            file.write(str(nodos[i][j]) + '[ label = '+str(x.producciones[i][j])+ ' ]'+os.linesep)
+            file.write(str(nodos[i][j]) + '  [ label = '+str(x.producciones[i][j])+ ' ,shape = none ]'+os.linesep)
+    
     file.write(str(x.nombre)+' [shape = box]' + os.linesep )
     file.write(str(x.nombre)+' -- 100 [color = white];' + os.linesep )
+
     for i in range(0,len(nodos)):
         for j in range(1,len(nodos[i])):
             file.write(str(nodos[i][0])+' -- '+str(nodos[i][j]) +' ;'+os.linesep)
 
     file.write('}')
     file.close()
-    os.system('dot -Tpng '+x.nombre+'.dot -o '+x.nombre+'-arbol.png')
+    
+    print('\n           EL ARCHIVO .PNG DEL ARBOL DE DERIVACION "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
+    os.system('dot -Tpng '+x.nombre+'-arbol.dot -o '+x.nombre+'-arbol.png')
     return 0
     
 def opcion1_4_generar_automata():
@@ -388,45 +414,45 @@ def opcion1_4_generar_automata():
     return 0
 
 def generar_automata_equivalente_pdf(x):
-    file = open(x.nombre+'.dot', "w")
+    file = open(x.nombre+'auto_equiv.dot', "w")
     file. write("digraph G {" + os.linesep) # primera linea
     ### nodos
-    file. write('    rankdir =TD ; splines=line; tailclip=false' + os.linesep)   # estilo de relaciones
+    file. write('    rankdir =TD ;\n    splines=line;\n    tailclip=false ;' + os.linesep)   # estilo de relaciones
 
     ###### nodo extra ----- tabla de datos
 
-    
-    file.write(' Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
-    file.write('<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0">'+ os.linesep)
-    file.write('<TR><TD align="left"> Nombre = <b>'+x.nombre+'</b></TD></TR>'+ os.linesep)
+    file.write('        /* Entities */ '+ os.linesep)
+    file.write('    Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
+    file.write('    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0">'+ os.linesep)
+    file.write('    <TR><TD align="left"> Nombre = <b>'+x.nombre+'</b></TD></TR>'+ os.linesep)
     texto =''
     for y in range(0,len(x.terminales)):
         if y == 0:  texto += x.terminales[y]
         else:       texto += ','+x.terminales[y]
-    file.write('<TR><TD align="left"> Alfabeto: { '+texto+' }</TD></TR>'+ os.linesep)
+    file.write('    <TR><TD align="left"> Alfabeto: { '+texto+' }</TD></TR>'+ os.linesep)
     
     for y in x.no_terminales:
         texto += ','+str(y)
     texto +=',#'
-    file.write('<TR><TD align="left"> Alfabeto de pila: { '+texto+' }</TD></TR>'+ os.linesep)
+    file.write('    <TR><TD align="left"> Alfabeto de pila: { '+texto+' }</TD></TR>'+ os.linesep)
 
-    file.write('<TR><TD align="left"> Estados: { i,q,p,f }</TD></TR>'+ os.linesep)
-    file.write('<TR><TD align="left"> Estado inicial: { i }</TD></TR>'+ os.linesep)
-    file.write('<TR><TD align="left"> Estado de aceptacion: { f }</TD></TR>'+ os.linesep)
-    file.write('</TABLE>>];'+ os.linesep)
+    file.write('    <TR><TD align="left"> Estados: { i,q,p,f }</TD></TR>'+ os.linesep)
+    file.write('    <TR><TD align="left"> Estado inicial: { i }</TD></TR>'+ os.linesep)
+    file.write('    <TR><TD align="left"> Estado de aceptacion: { f }</TD></TR>'+ os.linesep)
+    file.write('    </TABLE>>];'+ os.linesep)
 
     #############
 
     #### nodos medios
     
-    file.write('i [shape= circle,style = filled, color = lightblue]'+ os.linesep)
-    file.write('p [shape= circle,style = filled, color = lightblue]'+ os.linesep)
-    file.write('q [margin=1,style = filled, color = lightblue]'+ os.linesep)
-    file.write('f [shape= circle,peripheries=3,style = filled, color = lightblue]'+ os.linesep)             
+    file.write('    i [shape = circle , style = filled , color = lightblue                   ] ; '+ os.linesep)
+    file.write('    p [shape = circle , style = filled , color = lightblue                   ] ; '+ os.linesep)
+    file.write('    q [shape = circle , style = filled , color = lightblue , margin = 1      ] ; '+ os.linesep)
+    file.write('    f [shape = circle , style = filled , color = lightblue , peripheries = 3 ] ; '+ os.linesep)             
     #### nodos separadores
-    file.write('vacio [shape=none,label=""]'+ os.linesep)
-    file.write('arriba [shape=none,label=""]'+ os.linesep)
-    file.write('abajo[shape=none,label=""]'+ os.linesep)
+    file.write('    arriba [shape=none,label=""] ; '+ os.linesep)
+    file.write('    vacio  [shape=none,label=""] ; '+ os.linesep)
+    file.write('    abajo  [shape=none,label=""] ; '+ os.linesep)
 
 
     #### nodos arriba --- terminales
@@ -437,71 +463,88 @@ def generar_automata_equivalente_pdf(x):
             nodoparcial+=y[z]
         nodo = '$,'+str(y[0])+';'+nodoparcial
         
-        file.write(str(producciones)+' [shape = none,label="'+nodo+'"]'+ os.linesep)
+        file.write('    '+str(producciones)+' [ shape = plaintext , label = "'+nodo+'" ] ; '+ os.linesep)
         producciones = producciones+1
 
     #### nodos abajo --- producciones
     terminales = 200
     for y in x.terminales:
         nodo = str(y)+','+str(y)+';$'
-        file.write(str(terminales)+' [shape = none, label ="'+nodo+'"]'+ os.linesep)
+        file.write('    '+str(terminales)   +' [ shape = plaintext , label = "'+nodo+'" ] ; '+ os.linesep)
         terminales = terminales+1
     
-    ###         /* Relationships */
-    file.write('arriba -> vacio -> abajo -> Nodo_Tablero [color = white]'+os.linesep)
-    file.write('vacio -> i -> p  -> q -> f [color=white]'+os.linesep)
-    ### relaciones linea arriba
+    #######################################         /* Relationships */
+
+    file.write('        /* Relationships */' +os.linesep)
+    file.write('    Nodo_Tablero -> arriba -> vacio -> abajo  [ color = white ] ; '+os.linesep)
+
+    #____# relaciones linea arriba con producciones invisible
     aa=''
     producciones=100
     for y in x.producciones:
         aa += ' -> '+ str(producciones)
         producciones = producciones+1
-    file.write('arriba'+aa+'[color = white]'+os.linesep)
-    #### relaciones linea abajo
+    file.write('    arriba '+aa+' [ color = white ] ;'+os.linesep)
+
+    #____# relaciones linea medio invibles
+    
+    file.write('    vacio -> i ;'+ os.linesep)
+    file.write('    vacio -> i -> p -> q -> f [ color = white ] ; '+os.linesep)
+
+    #____# relaciones linea medio visibles
+    file.write('    i -> p [ label = "$,$;#" ] ;'+ os.linesep)
+    file.write('    p -> q [ label = "$,$;'+x.no_terminal_i+'" ] ;'+ os.linesep)
+    file.write('    q -> f [ label = "$,#;$" ] ;'+ os.linesep)
+
+    #____# relaciones linea abajo con terminales invisible
     aa=''
     terminales = 200
     for y in x.terminales:
         aa += " -> "+ str(terminales)
         terminales = terminales+1
-    file.write('abajo'+aa+'[color = white]'+os.linesep)
+    file.write('    abajo '+aa+' [ color = white ] ;'+os.linesep)
 
-    ### relaciones lineas medias
-    file.write('vacio -> i'+ os.linesep)
-    file.write('i -> p [label="$,$;#"]'+ os.linesep)
-    file.write('p -> q [label="$,$;'+x.no_terminal_i+'"]'+ os.linesep)
-    file.write('q -> f [label="$,#;$"]'+ os.linesep)
     
-    ### relaciones producciones
+    
+    #____# relaciones producciones
     producciones = 100
     for y in x.producciones:
-        file.write(str(producciones)+' -> q ; q -> '+str(producciones)+' [ dir= none]'+ os.linesep)
+        file.write('    '+str(producciones)+' -> q ; q -> '+str(producciones)+' [ dir = none] ;'+ os.linesep)
         producciones = producciones+1
 
-    ### relaciones terminales
+    #____# relaciones terminales
     terminales = 200
     for y in x.terminales:
-        file.write(str(terminales)+' -> q ; q -> '+str(terminales)+' [ dir= none]'+ os.linesep)
+        file.write('    '+str(terminales)  +' -> q ; q -> '+str(terminales)  +' [ dir = none] ;'+ os.linesep)
         terminales = terminales +1
-    #### rank de los medios
-    file.write('{rank =same ; vacio; i ; p ; q ; f};'+os.linesep)
+
+
+
+
+    #############################################           ranks
+    file.write('        /* Ranks */'+os.linesep)
+
     
-    #### rank de las producciones
+    #____# rank de las producciones arriba
     rankproducciones=''
     producciones = 100
     for y in x.producciones:
         rankproducciones += ' ; '+str(producciones)
         producciones = producciones+1
-    file.write('{rank =same ; arriba '+rankproducciones +'};'+os.linesep)
+    file.write('    { rank = same ; arriba'+rankproducciones +'} ;'+os.linesep)
 
-    #### rank terminales
+        
+    #____# rank de los medios
+    file.write('    { rank = same ; vacio ; i ; p ; q ; f } ;'+os.linesep)
+
+    
+    #____# rank terminales abajo
     rankterminales=''
     terminales = 200
     for y in x.terminales:
         rankterminales +=' ; '+ str(terminales)
         terminales = terminales+1
-    file.write('{rank =same ; abajo '+rankterminales +'};'+os.linesep)
-
-
+    file.write('    { rank = same ; abajo'+rankterminales   +'} ;'+os.linesep)
 
         
 
@@ -509,7 +552,7 @@ def generar_automata_equivalente_pdf(x):
     file. close()
 
     print('\n           EL ARCHIVO .PDF DEL AUTOMATA EQUIVALENTE "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
-    os.system('dot -Tpdf '+x.nombre+'.dot -o '+x.nombre+'auto_equiv.pdf')    
+    os.system('dot -Tpdf '+x.nombre+'auto_equiv.dot -o '+x.nombre+'auto_equiv.pdf')    
     ##os.system(x.nombre+'.pdf')
 
     return 0
