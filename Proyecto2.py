@@ -194,6 +194,116 @@ def crear_pdf_ap(x):
 
     return 0
 
+
+def opcion2_3_validar_cadena():
+    nombre = obtener_ap_especifico()
+    for x in ap:
+        if x.nombre == nombre:
+            validar_cadena_2_3(x,2)    
+    return 0
+
+def list_to_string(s):
+    fila = ''
+    return (fila.join(s))
+
+def validar_cadena_2_3(x,opc_e):
+    cadena = input ('Ingrese la cadena a validar: ')
+    ##cadena = '#'+cadena1+'#'
+    lista = list(cadena)
+    camino = []
+    pila = []
+    estadopila=[]
+    letraserrores=[]
+    
+    origen = x.estados_i 
+    
+    for y in x.trancisiones:
+        if y[0] == origen:
+            str1 = '-'
+            s = '-'.join([str(elem) for elem in pila])
+            estadopila.append(s)
+            camino.append(y)
+            origen = y[3]
+            if y[4] != '$':
+                pila.append(y[4])
+            if y[2] != '$':
+                pila = pila[:-1]
+                ## inserta
+            break           
+    estavacia = False
+    existeletra =False
+    for y in lista:
+        existeletra =False
+        for z in x.trancisiones:
+            if origen == z[0] and z[1] == y :
+                existeletra = True
+                if z[2] == pila[-1] or z[2]=='$':
+                    s = '-'.join([str(elem) for elem in pila])
+                    estadopila.append(s)
+                    camino.append(z)
+                    ## extrae
+                    if z[2] != '$':
+                        if pila[-1] == z[2]:
+                            if len(pila) ==0:
+                                estavacia = True
+                            else:
+                                pila.pop()
+                    ## inserta
+                    if z[4] != '$':
+                        pila.append(z[4])
+                    origen = z[3]
+                    break
+        if existeletra ==False:
+            letraserrores.append(y)
+
+
+    for y in x.trancisiones:
+        if y[3] == x.estados_a and origen ==y[0]:
+            s = '-'.join([str(elem) for elem in pila])
+            estadopila.append(s)
+            camino.append(y)
+            if z[2] != '$':
+                if pila[-1] == z[2]:
+                    if len(pila) ==0:
+                        estavacia = True
+                    else:
+                        pila.pop
+                ## inserta
+            if z[4] != '$':
+                pila.append(y[4])
+            s = '-'.join([str(elem) for elem in pila])
+            estadopila.append(s)
+            break
+
+    print('camino realizado')        
+    for y in camino:
+        print(y)
+
+    print('Estado final de la pila')
+    print(pila)
+
+    print('estado de la pila')
+    print('     -----Inicio')
+    for y in estadopila:
+        print('>>'+y) 
+    print('     -----Fin')
+    
+    if not pila:
+        if estavacia == False:
+            print("\n   _._._._Cadena valida_._._._\n")
+    else:
+        print("\n   _._._._Cadena invalida :( _._._._\n")
+
+    if len(letraserrores)==0:
+        pass
+    else:
+        print('Estas letras no forman parde de los terminales')
+        for y in letraserrores:
+            print(y)
+    return 0
+
+
+
 ############################################################################################################
 ############################################################################################################
 ############################################################################################################
@@ -201,7 +311,6 @@ def crear_pdf_ap(x):
 ############################################################################################################
 ############################################################################################################
 ########################### OPCIONES DE GRAMATICAS REGULARES LIBRES DE CONTEXTO     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
 
 
 def opcion1_1_cargar_archivo():
@@ -260,7 +369,9 @@ def opcion1_1_cargar_archivo():
     ####
     si = input('    Presione "y" si desea imprimir los datos guardados o cualquier letra para continuar:')
     if si =='y':    imprimir_glc()
-     
+
+    return 0
+
 ### opcion extra    
 def imprimir_glc():
     for x  in glc:
@@ -622,7 +733,9 @@ def submenu2():
         elif opcion ==2:
             print('         MOSTRAR INFORMACION DEL AUTOMATA')
             opcion2_2_mostrar_informacion()
-        elif opcion ==3:print('         seleccion la opcion 3')
+        elif opcion ==3:
+            print('         VALIDAR UNA CADENA')
+            opcion2_3_validar_cadena()
         elif opcion ==4:print('         seleccion la opcion 4')
         elif opcion ==5:print('         seleccion la opcion 5')
         elif opcion ==6:print('         seleccion la opcion 6')
