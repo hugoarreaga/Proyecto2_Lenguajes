@@ -197,16 +197,18 @@ def crear_pdf_ap(x):
 
 def opcion2_3_validar_cadena():
     nombre = obtener_ap_especifico()
+    dato = []
     for x in ap:
         if x.nombre == nombre:
-            validar_cadena_2_3(x,2)    
+            dato = validar_cadena_2_3(x)    
+            if dato[0] == True :
+                print('    ************  LA CADENA ES VALIDA  ************')
+            else:
+                print('    ************  CADENA ES INVALIDA')
     return 0
 
-def list_to_string(s):
-    fila = ''
-    return (fila.join(s))
 
-def validar_cadena_2_3(x,opc_e):
+def validar_cadena_2_3(x):
     cadena = input ('Ingrese la cadena a validar: ')
     ##cadena = '#'+cadena1+'#'
     lista = list(cadena)
@@ -227,7 +229,7 @@ def validar_cadena_2_3(x,opc_e):
             if y[4] != '$':
                 pila.append(y[4])
             if y[2] != '$':
-                pila = pila[:-1]
+                del pila[-1]
                 ## inserta
             break           
     estavacia = False
@@ -247,7 +249,7 @@ def validar_cadena_2_3(x,opc_e):
                             if len(pila) ==0:
                                 estavacia = True
                             else:
-                                pila.pop()
+                                del pila[-1]
                     ## inserta
                     if z[4] != '$':
                         pila.append(z[4])
@@ -262,19 +264,21 @@ def validar_cadena_2_3(x,opc_e):
             s = '-'.join([str(elem) for elem in pila])
             estadopila.append(s)
             camino.append(y)
-            if z[2] != '$':
-                if pila[-1] == z[2]:
+            if y[2] != '$':
+                if pila[-1] == y[2]:
                     if len(pila) ==0:
                         estavacia = True
                     else:
-                        pila.pop
+                        del pila[-1]
                 ## inserta
-            if z[4] != '$':
+            if y[4] != '$':
                 pila.append(y[4])
             s = '-'.join([str(elem) for elem in pila])
             estadopila.append(s)
             break
-
+    
+    
+    '''
     print('camino realizado')        
     for y in camino:
         print(y)
@@ -287,12 +291,13 @@ def validar_cadena_2_3(x,opc_e):
     for y in estadopila:
         print('>>'+y) 
     print('     -----Fin')
-    
+    '''
+    cadena_valida = False
     if not pila:
-        if estavacia == False:
-            print("\n   _._._._Cadena valida_._._._\n")
-    else:
-        print("\n   _._._._Cadena invalida :( _._._._\n")
+        if estavacia == True:
+            cadena_valida = False
+        else:
+            cadena_valida = True
 
     if len(letraserrores)==0:
         pass
@@ -300,8 +305,25 @@ def validar_cadena_2_3(x,opc_e):
         print('Estas letras no forman parde de los terminales')
         for y in letraserrores:
             print(y)
-    return 0
+    
+    return [cadena_valida, camino,pila,estadopila]
 
+def opcion2_4_ruta_validacion():
+    nombre = obtener_ap_especifico()
+    dato = []
+    for x in ap:
+        if x.nombre == nombre:
+            dato = validar_cadena_2_3(x)    
+            if dato[0] is True :
+                print('    ************  LA CADENA ES VALIDA  ************')
+            else:
+                print('    ************  CADENA ES INVALIDA')
+    
+    if dato[0] is True:
+        print('\nRuta:')
+        for x in dato[1]:
+            print(x[0]+','+x[1]+','+x[2]+';'+x[3]+','+x[4])
+    return 0
 
 
 ############################################################################################################
@@ -736,9 +758,13 @@ def submenu2():
         elif opcion ==3:
             print('         VALIDAR UNA CADENA')
             opcion2_3_validar_cadena()
-        elif opcion ==4:print('         seleccion la opcion 4')
-        elif opcion ==5:print('         seleccion la opcion 5')
-        elif opcion ==6:print('         seleccion la opcion 6')
+        elif opcion ==4:
+            print('         RUTA DE VALIDACION')
+            opcion2_4_ruta_validacion()
+        elif opcion ==5:
+            print('         RECORRIDO PASO A PASO')
+        elif opcion ==6:
+            print('         VALIDAR CADENA EN UNA PASADA')
         elif opcion ==7:
             print('         seleccionp la opcion 7')
             pase = False
