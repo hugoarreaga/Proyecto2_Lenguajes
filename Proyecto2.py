@@ -2,13 +2,11 @@ import threading
 import time
 import os
 
-
 global glc  #gramatica libre del contexto 
 glc = list()
 
 global ap  #automata de pila
 ap = list()
-
 
 def pedirNumeroEntero():
  
@@ -23,15 +21,9 @@ def pedirNumeroEntero():
      
     return num
 
-
-
 ############################################################################################################
 ############################################################################################################
-############################################################################################################
-############################################################################################################
-############################################################################################################
-############################################################################################################
-########################### OPCIONES DE AUTOMATAS DE PILA     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+########################### OPCIONES DE AUTOMATAS DE PILA     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓######################
 
 def opcion2_1_cargar_archivo():
     correcto=False
@@ -202,26 +194,26 @@ def opcion2_3_validar_cadena():
         if x.nombre == nombre:
             dato = validar_cadena_2_3(x)    
             if dato[0] == True :
-                print('    ************  LA CADENA ES VALIDA  ************')
+                print('\n    ************  LA CADENA ES VALIDA  ************\n')
             else:
-                print('    ************  CADENA ES INVALIDA')
+                print('\n    ************  CADENA ES INVALIDA   ************\n')
     return 0
 
 
 def validar_cadena_2_3(x):
     cadena = input ('Ingrese la cadena a validar: ')
     ##cadena = '#'+cadena1+'#'
-    lista = list(cadena)
+    listaletras = list(cadena)
     camino = []
     pila = []
     estadopila=[]
     letraserrores=[]
-    
+    estadoentrada =['']
+
     origen = x.estados_i 
     
     for y in x.trancisiones:
         if y[0] == origen:
-            str1 = '-'
             s = '-'.join([str(elem) for elem in pila])
             estadopila.append(s)
             camino.append(y)
@@ -231,74 +223,99 @@ def validar_cadena_2_3(x):
             if y[2] != '$':
                 del pila[-1]
                 ## inserta
-            break           
+            break     
+
+    estavaciab = False   
+
     estavacia = False
     existeletra =False
-    for y in lista:
+
+    sacandoinexistente = False
+    errorinexistente = False
+
+    sacaincorrecto = False
+    estadoactual = ''
+    for y in listaletras:
         existeletra =False
+        
         for z in x.trancisiones:
             if origen == z[0] and z[1] == y :
                 existeletra = True
                 if z[2] == pila[-1] or z[2]=='$':
-                    s = '-'.join([str(elem) for elem in pila])
-                    estadopila.append(s)
+                    s = ''.join([str(elem) for elem in pila])
+                    estadoactual = estadoactual +y 
+                    estadopila.insert(0,s)
+                    estadoentrada.append(estadoactual)
                     camino.append(z)
                     ## extrae
                     if z[2] != '$':
+                        aa = ['#']
+                        if pila == aa:
+                            estavacia = True
                         if pila[-1] == z[2]:
-                            if len(pila) ==0:
+                            try:
+                                pila.pop()
+                            except :
                                 estavacia = True
+                                print('sacando de mas')
+                            '''if len(pila) ==0:
+                                estavacia = True
+                                
                             else:
-                                del pila[-1]
+                                del pila[-1]'''
+                        else:
+                            sacaincorrecto = True
                     ## inserta
                     if z[4] != '$':
                         pila.append(z[4])
                     origen = z[3]
                     break
+                else:
+                    estavacia = True
         if existeletra ==False:
             letraserrores.append(y)
-
+    
+    estadoentrada.append(estadoactual)
+    estadoentrada.append(estadoactual)
 
     for y in x.trancisiones:
+        sacaincorrecto = False
         if y[3] == x.estados_a and origen ==y[0]:
             s = '-'.join([str(elem) for elem in pila])
-            estadopila.append(s)
+            estadopila.insert(0,s)
             camino.append(y)
             if y[2] != '$':
                 if pila[-1] == y[2]:
-                    if len(pila) ==0:
+                    try:
+                        pila.pop()
+                    except :
                         estavacia = True
-                    else:
-                        del pila[-1]
+                    #if not len(pila):
+                    #    estavacia = True
+                    #else:
+                    #    del pila[-1]
+                else:
+                    sacaincorrecto = True
                 ## inserta
             if y[4] != '$':
                 pila.append(y[4])
             s = '-'.join([str(elem) for elem in pila])
-            estadopila.append(s)
+            estadopila.insert(0,s)
             break
     
     
-    '''
-    print('camino realizado')        
-    for y in camino:
-        print(y)
-
-    print('Estado final de la pila')
-    print(pila)
-
-    print('estado de la pila')
-    print('     -----Inicio')
-    for y in estadopila:
-        print('>>'+y) 
-    print('     -----Fin')
+    
+    cadena_valida = False
+    if not pila and estavacia == False:
+        cadena_valida = True
+    else:
+        cadena_valida = False
+    
     '''
     cadena_valida = False
-    if not pila:
-        if estavacia == True:
-            cadena_valida = False
-        else:
-            cadena_valida = True
-
+    if len(pila) ==0 and estavacia == False and sacandoinexistente==True :
+        cadena = True
+    '''
     if len(letraserrores)==0:
         pass
     else:
@@ -306,7 +323,7 @@ def validar_cadena_2_3(x):
         for y in letraserrores:
             print(y)
     
-    return [cadena_valida, camino,pila,estadopila]
+    return [cadena_valida, camino,estadoentrada,estadopila, x.nombre]
 
 def opcion2_4_ruta_validacion():
     nombre = obtener_ap_especifico()
@@ -315,9 +332,9 @@ def opcion2_4_ruta_validacion():
         if x.nombre == nombre:
             dato = validar_cadena_2_3(x)    
             if dato[0] is True :
-                print('    ************  LA CADENA ES VALIDA  ************')
+                print('\n    ************  LA CADENA ES VALIDA  ************\n')
             else:
-                print('    ************  CADENA ES INVALIDA')
+                print('\n    ************  CADENA ES INVALIDA   ************\n')
     
     if dato[0] is True:
         print('\nRuta:')
@@ -325,11 +342,53 @@ def opcion2_4_ruta_validacion():
             print(x[0]+','+x[1]+','+x[2]+';'+x[3]+','+x[4])
     return 0
 
+def opcion2_6_validar_cadena_pasada():
 
-############################################################################################################
-############################################################################################################
-############################################################################################################
-############################################################################################################
+    nombre = obtener_ap_especifico()
+    dato = []
+    for x in ap:
+        if x.nombre == nombre:
+            dato = validar_cadena_2_3(x)    
+            if dato[0] is True :
+                print('\n    ************  LA CADENA ES VALIDA  ************\n')
+            else:
+                print('\n    ************  CADENA ES INVALIDA   ************\n')
+    
+    estadopila =[]
+    camino = []
+    estadoentrada = []
+    if dato[0] is True:
+        camino = dato[1]
+        estadoentrada = dato[2]
+        estadopila = dato[3]
+        nombre = dato[4]
+        caminoordenado = []
+        for x in camino:
+            linea = ''
+            linea = x[0]+','+x[1]+','+x[2]+';'+x[3]+','+x[4]
+            caminoordenado.append(linea)
+        caminoordenado.append(' ')
+
+
+        file = open(nombre+'-pasada.dot', "w")
+        file. write("digraph G {" + os.linesep) # primera linea
+        file.write('    Nodo_Tablero [shape=none, margin=0 ,label=< '+ os.linesep)
+        file.write('    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0">'+ os.linesep)
+        file.write('    <TR>  <TD align="left"> ITERACION </TD> <TD align="left"> PILA </TD><TD align="left"> ENTRADA </TD><TD align="left"> TRANSICION </TD> </TR>'+ os.linesep)
+        iteracion = 0
+        for x in range(0, len(caminoordenado)):
+            file.write('    <TR>  <TD align="left"> '+str(iteracion)+' </TD> <TD align="left"> '+str(estadopila[x])+' </TD><TD align="left"> '+str(estadoentrada[x])+' </TD><TD align="left"> '+str(caminoordenado[x])+' </TD> </TR>'+ os.linesep)
+            iteracion = iteracion+1
+
+        file.write('</TABLE>>];'+ os.linesep)
+        file.write('}')
+        file.close()
+
+        os.system('dot -Tpdf '+nombre+'-pasada.dot -o '+nombre+'-pasada.pdf')    
+        os.system(nombre+'-pasada.pdf')
+        
+    return 0
+
 ############################################################################################################
 ############################################################################################################
 ########################### OPCIONES DE GRAMATICAS REGULARES LIBRES DE CONTEXTO     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -690,16 +749,9 @@ def generar_automata_equivalente_pdf(x):
 
     return 0
 
-
-
-
-##################################################################################################
-###################################################################################################
-###################################################################################################
-###################################################################################################    
-##################################################################################################
+####################################################################################################
+####################################################################################################
 ################################################# menusss ##########################################
-
 
 def submenu1():
     pase = True
@@ -765,6 +817,7 @@ def submenu2():
             print('         RECORRIDO PASO A PASO')
         elif opcion ==6:
             print('         VALIDAR CADENA EN UNA PASADA')
+            opcion2_6_validar_cadena_pasada()
         elif opcion ==7:
             print('         seleccionp la opcion 7')
             pase = False
