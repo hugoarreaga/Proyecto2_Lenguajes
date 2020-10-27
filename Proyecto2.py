@@ -341,6 +341,85 @@ def opcion2_4_ruta_validacion():
         for x in dato[1]:
             print(x[0]+','+x[1]+','+x[2]+';'+x[3]+','+x[4])
     return 0
+def opcion2_5_recorrido_pasoapaso():
+    nombre = obtener_ap_especifico()
+    dato = []
+    automatas = []
+    for x in ap:
+        if x.nombre == nombre:
+            dato = validar_cadena_2_3(x)    
+            if dato[0] is True :
+                automatas = x
+
+                print('\n    ************  LA CADENA ES VALIDA  ************\n')
+            else:
+                print('\n    ************  CADENA ES INVALIDA   ************\n')
+    
+    estadopila =[]
+    camino = []
+    estadoentrada = []
+    if dato[0] is True:
+        camino = dato[1]
+        estadoentrada = dato[2]
+        estadopila = dato[3]
+        nombre = dato[4]
+        numero = 0
+        for x in range(0, len(camino)):
+            file = open(nombre+'_paso'+str(numero)+'.dot', "w")
+            file.write("digraph G {" + os.linesep) 
+            file.write('    rankdir =LR ; ' + os.linesep)
+            file.write('    node0 [ shape = record label = " Pila | '+estadopila[x]+' "];'+os.linesep)
+            file.write('    node1 [ shape = record label = " Entrada | '+estadoentrada[x]+' "];'+os.linesep)
+            file.write('    Nodo_Vacio [shape=none, label=""]'+ os.linesep)
+            for y in automatas.estados:
+                if y == camino[x][0]:
+                    file. write('    '+y +'[shape= circle color = yellow style = filled]'+ os.linesep)
+                else:
+                    file. write('    '+y +'[shape= circle]'+ os.linesep) 
+                if y == automatas.estados_a:
+                    file.write('    '+y+'[ shape = doublecircle]'+os.linesep)
+            for y in automatas.trancisiones:
+                mensaje = y[1]+','+y[2]+';'+y[4]
+                if y == camino[x]:
+                
+                    file.write('    '+y[0] +'->'+y[3]+'[ fontcolor = red label ="'+mensaje+'"]'+os.linesep)
+                else:
+                    file.write('    '+y[0] +'->'+y[3]+'[ label ="'+mensaje+'"]'+os.linesep)
+            
+            file.write('    Nodo_Vacio -> '+automatas.estados_i + os.linesep )   
+            file.write('}')
+            file.close()
+
+            os.system('dot -Tpng '+nombre+'_paso'+str(numero)+'.dot -o '+nombre+'_paso'+str(numero)+'.png')    
+            os.system(nombre+'_paso'+str(numero)+'.png')
+
+            numero = numero +1
+            continuar = input('presione enter para mostrar el siguiente paso:')
+
+
+        file = open(nombre+'_paso'+str(numero)+'.dot', "w")
+        file.write("digraph G {" + os.linesep) 
+        file.write('    rankdir =LR ; ' + os.linesep)
+        file.write('    node0 [ shape = record label = " Pila |'+estadopila[numero]+' "];'+os.linesep)
+        file.write('    node1 [ shape = record label = " Entrada |'+estadoentrada[numero]+' "];'+os.linesep)
+        file.write('    Nodo_Vacio [shape=none, label=""]'+os.linesep) 
+        for y in automatas.estados:
+            if y == automatas.estados_a:
+                file. write('    '+y +'[shape= doublecircle color = yellow style = filled]'+ os.linesep)
+            else:
+                file. write('    '+y +'[shape= circle]'+ os.linesep) 
+        for y in automatas.trancisiones:
+            mensaje = y[1]+','+y[2]+';'+y[4]
+            file.write('    '+y[0] +'->'+y[3]+'[ label ="'+mensaje+'"]'+os.linesep)
+        
+        file.write('    Nodo_Vacio -> '+automatas.estados_i + os.linesep )  
+        file.write('}')
+        file.close()
+        os.system('dot -Tpng '+nombre+'_paso'+str(numero)+'.dot -o '+nombre+'_paso'+str(numero)+'.png')    
+        os.system(nombre+'_paso'+str(numero)+'.png')
+        
+
+    return 0
 
 def opcion2_6_validar_cadena_pasada():
 
@@ -486,6 +565,7 @@ def obtener_glc_especifico():
                 if nombre == x.nombre:
                     paso= False
                     return x.nombre
+
                 else:
                     print('La gramatica no existe, intente con un nuevo nombre')
 
@@ -566,8 +646,8 @@ def generar_arbol_pdf(x):
             ac = ac+1
         nodos.append(linea)
     #### crear lista de nodos
-    print(nodos)
-    print(x.producciones)
+    #print(nodos)
+    #print(x.producciones)
     ### cambiar nodos
     for i in range(0,len(x.producciones)):
         for y in range(1,len(x.producciones[i])):
@@ -576,7 +656,7 @@ def generar_arbol_pdf(x):
                     if x.producciones[z][0] == x.producciones[i][y]:
                         nodos[z][0] = nodos[i][y]
                         break
-    print(nodos)
+    #print(nodos)
 
     ### cambiar nodos
     for i in range(0,len(nodos)):
@@ -595,6 +675,7 @@ def generar_arbol_pdf(x):
     
     print('\n           EL ARCHIVO .PNG DEL ARBOL DE DERIVACION "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
     os.system('dot -Tpng '+x.nombre+'-arbol.dot -o '+x.nombre+'-arbol.png')
+    os.system(x.nombre+'-arbol.png')
     return 0
     
 def opcion1_4_generar_automata():
@@ -745,6 +826,7 @@ def generar_automata_equivalente_pdf(x):
 
     print('\n           EL ARCHIVO .PDF DEL AUTOMATA EQUIVALENTE "'+x.nombre+'" LOGRO GENERARSE CORRECTAMENTE\n')
     os.system('dot -Tpdf '+x.nombre+'auto_equiv.dot -o '+x.nombre+'auto_equiv.pdf')    
+    os.system(x.nombre+'auto_equiv.pdf')
     ##os.system(x.nombre+'.pdf')
 
     return 0
@@ -815,6 +897,7 @@ def submenu2():
             opcion2_4_ruta_validacion()
         elif opcion ==5:
             print('         RECORRIDO PASO A PASO')
+            opcion2_5_recorrido_pasoapaso()
         elif opcion ==6:
             print('         VALIDAR CADENA EN UNA PASADA')
             opcion2_6_validar_cadena_pasada()
@@ -873,7 +956,7 @@ def cuenta():
         print ('        201701108')
         print ('        SISTEMA Spark Stack ')
         print ('               '+str(6-i)) 
-        time.sleep(0.25) 
+        time.sleep(1) 
 #### CONTEO FINAL
 def cuenta_salir():
     
@@ -882,7 +965,7 @@ def cuenta_salir():
         print('\n     *******************************\n     GRACIAS POR UTILIZAR EL SISTEMA')
         print('                     '+str(6-i))
         print('                  ADIOSSS\n     *******************************')
-        time.sleep(0.75) 
+        time.sleep(1) 
     os.system('cls')
 
 x = threading.Thread(target = cuenta) 
